@@ -68,7 +68,9 @@ app.post('/chat', async (req: Request, res: Response): Promise<any> => {
       model: 'gpt-3.5-turbo',
       messages: [{ role: 'user', content: message }],
     });
-    const reply = response.choices[0].message.content;
+
+    const reply = response.choices[0].message?.content ?? 'No response from AI';
+    // Send the message to Stream Chat API
     res.status(200).json({ reply });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
