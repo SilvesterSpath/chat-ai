@@ -69,10 +69,25 @@ app.post('/chat', async (req: Request, res: Response): Promise<any> => {
       messages: [{ role: 'user', content: message }],
     });
 
-    const reply = response.choices[0].message?.content ?? 'No response from AI';
-    // Send the message to Stream Chat API
-    res.status(200).json({ reply });
+    const aiMessage: string =
+      response.choices[0].message?.content ?? 'No response from AI';
+
+    // Creata or get channel this is the unique id:`chat-${userId}`
+    const channel = client.channel('messaging', `chat-${userId}`, {
+      name: 'AI Chat',
+      created_by_id: 'ai_bot',
+    });
+
+    // Send message to channel
+    await channel.create();
+    await channel.sendMessage({
+      text: aiMessage,
+      user_id: 'ai_bot',
+    });
+
+    res.status(200).json({ reply: aiMessage });
   } catch (error) {
+    console.log('Error generating response:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
