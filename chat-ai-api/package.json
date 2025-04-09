@@ -6,7 +6,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsc --noEmit && tsx --watch src/server.ts | tee server.txt",
+    "dev": "tsc --noEmit && tsx --watch src/server.ts | tee log.txt",
     "build": "tsc",
     "start": "node dist/server.js"
   },
