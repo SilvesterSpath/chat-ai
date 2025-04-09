@@ -1,6 +1,6 @@
 {
-  "id": "e23bf7d5-c8fb-436e-b2ce-eced90fd2089",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "de723ea2-1074-4bab-8433-09d52c05714d",
+  "prevId": "01ebd6e2-1a88-42c1-9301-f98a5d9e1336",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -16,7 +16,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "varchar(255)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -52,9 +52,9 @@
       "name": "users",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },

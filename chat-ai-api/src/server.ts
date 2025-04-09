@@ -3,6 +3,10 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { StreamChat } from 'stream-chat';
 import OpenAI from 'openai';
+import { db } from './config/database.js'; // Import db with .js extension not .ts
+import { chats, users } from './db/schema.js';
+import { eq } from 'drizzle-orm';
+import { ChatCompletionMessageParam } from 'openai/resources';
 
 dotenv.config();
 const app = express();
@@ -42,9 +46,25 @@ app.post(
         await client.upsertUser({ id: userId, name, email, role: 'user' });
       }
 
+      // Check for existing user in the database
+      const existingUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.userId, userId));
+
+      // If user exists, return the user data
+      if (!existingUser.length) {
+        // User does not exist in the database, create a new user
+        console.log(
+          `User ${userId} does not exist in the database. Creating a new user.`
+        );
+        await db.insert(users).values({ userId, name, email });
+      }
+
       res.status(200).json({ userId, name, email });
     } catch (error) {
-      res.status(500).json({ Error: 'Internal server error' });
+      console.error('Error during /register-user:', error);
+      res.status(500).json({ error: 'Internal server error1' });
     }
   }
 );
@@ -88,7 +108,7 @@ app.post('/chat', async (req: Request, res: Response): Promise<any> => {
     res.status(200).json({ reply: aiMessage });
   } catch (error) {
     console.log('Error generating response:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error2' });
   }
 });
 

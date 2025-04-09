@@ -1,7 +1,7 @@
 import { pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
-  userId: serial('id').primaryKey(),
+  userId: text('user_id').primaryKey(),
   name: text('name').notNull(),
   email: text('email').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
@@ -9,7 +9,7 @@ export const users = pgTable('users', {
 
 export const chats = pgTable('chats', {
   id: serial('id').primaryKey(),
-  userId: varchar('user_id', { length: 255 }).notNull(),
+  userId: text('user_id').notNull(),
   message: text('message').notNull(),
   reply: text('reply').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
