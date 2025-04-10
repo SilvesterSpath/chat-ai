@@ -76,14 +76,27 @@ app.post('/chat', async (req: Request, res: Response): Promise<any> => {
     return res.status(400).json({ error: 'Message and userId are required' });
   }
   try {
-    // Vreify user with Stream Chat API
+    // Verify user with Stream Chat API
     const userResponse = await client.queryUsers({ id: userId });
     if (!userResponse.users.length) {
       return res
         .status(404)
         .json({ error: 'User not found. Please register first.' });
     }
-    const user = userResponse.users[0];
+
+    // Check for existing user in the database
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(eq(users.userId, userId));
+
+    // If user exists, return the user data
+    if (!existingUser.length) {
+      return res.status(404).json({
+        error: 'User not found. Please register first.',
+      });
+    }
+
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [{ role: 'user', content: message }],
@@ -91,6 +104,13 @@ app.post('/chat', async (req: Request, res: Response): Promise<any> => {
 
     const aiMessage: string =
       response.choices[0].message?.content ?? 'No response from AI';
+
+    // Save message to database
+    await db.insert(chats).values({
+      userId,
+      message,
+      reply: aiMessage,
+    });
 
     // Creata or get channel this is the unique id:`chat-${userId}`
     const channel = client.channel('messaging', `chat-${userId}`, {
@@ -112,8 +132,27 @@ app.post('/chat', async (req: Request, res: Response): Promise<any> => {
   }
 });
 
-const PPORT = process.env.PORT || 5000;
+// Get chat history
+app.post('/get-messages', async (req: Request, res: Response): Promise<any> => {
+  const { userId } = req.body;
+  if (!userId) {
+    return res.status(400).json({ error: 'userId is required' });
+  }
+  try {
+    const chatHistory = await db
+      .select()
+      .from(chats)
+      .where(eq(chats.userId, userId));
 
-app.listen(PPORT, () => {
-  console.log(`Server is running on port ${PPORT}`);
+    res.status(200).json({ messages: chatHistory });
+  } catch (error) {
+    console.error('Error during /get-messages:', error);
+    res.status(500).json({ error: 'Internal server error3' });
+  }
+});
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
