@@ -2,6 +2,6 @@
 
 <template>
   <div>
-    <h1>My App</h1>
+    <RouterView />
   </div>
 </template>
