@@ -11,7 +11,16 @@ import { ChatCompletionMessageParam } from 'openai/resources';
 dotenv.config();
 const app = express();
 
-app.use(cors());
+// Configure CORS with specific options
+app.use(
+  cors({
+    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // Add your frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
