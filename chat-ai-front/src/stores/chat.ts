@@ -15,7 +15,7 @@ interface FormattedMessage {
 
 export const useChatStore = defineStore('chat', () => {
   const messages = ref<{ role: string; content: string }[]>([]);
-  const idLoading = ref(false);
+  const isLoading = ref(false);
 
   const userStore = useUserStore();
 
@@ -42,5 +42,5 @@ export const useChatStore = defineStore('chat', () => {
       console.error('Error loading chat history', error);
     }
   };
-  return { messages, idLoading, loadChatHistory };
+  return { messages, isLoading, loadChatHistory };
 });

@@ -22,12 +22,11 @@ const scrollToBottom = () => {
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
   });
-
-  // Load chat history
-  onMounted(async () => {
-    await chatStore.loadChatHistory().then(() => scrollToBottom());
-  });
 };
+// Load chat history
+onMounted(() => {
+  chatStore.loadChatHistory().then(() => scrollToBottom());
+});
 </script>
 
 <template>
@@ -43,7 +42,6 @@ const scrollToBottom = () => {
         :class="msg.role === 'user' ? 'justify-end' : 'justify-start'"
       >
         <div
-          v-if="msg.role === 'user'"
           class="max-w-xs px-4 py-2 rounded-lg md:max-w-md"
           :class="
             msg.role === 'user'
