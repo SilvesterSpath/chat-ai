@@ -1,0 +1,37 @@
+# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
+# Build and output folders
+**/dist/**
+**/build/**
+**/.next/**
+**/.turbo/**
+**/.expo/**
+
+# Dependency folders
+**/node_modules/**
+**/pnpm-lock.yaml
+**/package-lock.json
+**/yarn.lock
+
+# System/cache/temp
+**/.cache/**
+**/.cursorcache/**
+**/.vscode/**
+**/.DS_Store
+**/Thumbs.db
+
+# Logs
+**/*.log
+
+# Test coverage/output
+**/coverage/**
+**/.nyc_output/**
+**/__snapshots__/**
+**/__tests__/**
+
+# ENV and credentials
+**/.firebase*
+**/firebase.json
+
+# Optional (if you know these don’t matter to your review)
+**/public/**
+**/assets/**
