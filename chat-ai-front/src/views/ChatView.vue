@@ -4,6 +4,7 @@ import Header from '../components/Header.vue';
 import { useUserStore } from '../stores/user';
 import { useChatStore } from '../stores/chat';
 import { useRouter } from 'vue-router';
+import ChatInput from '../components/ChatInput.vue';
 
 const userStore = useUserStore();
 const chatStore = useChatStore();
@@ -52,6 +53,12 @@ onMounted(() => {
           {{ msg.content }}
         </div>
       </div>
+      <div v-if="chatStore.isLoading" class="flex justify-start">
+        <div class="bg-gray-700 text-white px-4 py-2 rounded-lg">
+          <span class="animate-pulse">Ai is thinking...</span>
+        </div>
+      </div>
     </div>
+    <ChatInput @send="chatStore.sendMessage" />
   </div>
 </template>
