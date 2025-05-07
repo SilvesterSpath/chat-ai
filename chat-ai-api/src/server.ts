@@ -106,9 +106,44 @@ app.post('/chat', async (req: Request, res: Response): Promise<any> => {
       });
     }
 
+    // Fetch users past messages
+    const pastMessages = await db
+      .select()
+      .from(chats)
+      .where(eq(chats.userId, userId))
+      .orderBy(chats.createdAt)
+      .limit(10);
+
+    console.log(
+      'Past messages from DB:',
+      JSON.stringify(pastMessages, null, 2)
+    );
+
+    // Format the chat history
+    const conversation: ChatCompletionMessageParam[] = pastMessages.flatMap(
+      (item) => [
+        { role: 'user', content: item.message },
+        { role: 'assistant', content: item.reply },
+      ]
+    );
+
+    console.log(
+      'Formatted conversation:',
+      JSON.stringify(conversation, null, 2)
+    );
+
+    // Add latest user message to the conversation
+    conversation.push({ role: 'user', content: message });
+
+    console.log(
+      'Final conversation with new message:',
+      JSON.stringify(conversation, null, 2)
+    );
+
+    // Send message to OpenAI API
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: message }],
+      messages: conversation as ChatCompletionMessageParam[],
     });
 
     const aiMessage: string =
